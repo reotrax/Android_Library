@@ -91,50 +91,6 @@ public class GraphBarFragment extends Fragment {
 	}
 
 	/**
-	 * v2の書き方
-	 */
-	private void entry() {
-		List<String> value = new ArrayList<>();
-		value.add("" + (1 + 1));
-		value.add("" + (2 + 1));
-		value.add("" + (3 + 1));
-		value.add("" + (4 + 1));
-		value.add("" + (5 + 1));
-		value.add("" + (6 + 1));
-		value.add("" + (7 + 1));
-		value.add("" + (8 + 1));
-		value.add("" + (9 + 1));
-		value.add("" + (10 + 1));
-
-
-		List<BarEntry> entry = new ArrayList<>();
-		entry.add(new BarEntry(1000f, 1, "Green"));
-		entry.add(new BarEntry(2000f, 2));
-		entry.add(new BarEntry(3000f, 3));
-		entry.add(new BarEntry(4000f, 4));
-		entry.add(new BarEntry(5000f, 5));
-		entry.add(new BarEntry(6000f, 6));
-		entry.add(new BarEntry(7000f, 7));
-		entry.add(new BarEntry(8000f, 8));
-		entry.add(new BarEntry(9000f, 9));
-		entry.add(new BarEntry(10000f, 10));
-
-		// 1.データセット作成
-		BarDataSet barDataSet = new BarDataSet(entry, "データ表示");
-		barDataSet.setColor(Color.BLUE);
-
-		// 2.データセット設定
-		List<IBarDataSet> dataset = new ArrayList<>();
-		dataset.add(barDataSet);
-
-		// 3.バーデータ設定
-		BarData data = new BarData(dataset);
-		barChart.setData(data);
-		barChart.invalidate();
-//		barChart.animateY(2000, Easing.EasingOption.EaseInBack);
-	}
-
-	/**
 	 * v3以降の書き方
 	 */
 	public void barChartSetting() {

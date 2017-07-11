@@ -3,8 +3,7 @@ package android.library.com.android_library;
 import android.graphics.Point;
 import android.library.com.android_library.android.library.com.android_library.fragment.GraphBarFragment;
 import android.library.com.android_library.android.library.com.android_library.fragment.GraphPieFragment;
-import android.library.com.android_library.android.library.com.android_library.fragment.LineChartFragment;
-import android.library.com.android_library.android.library.com.android_library.fragment.PlusOneFragment;
+import android.library.com.android_library.android.library.com.android_library.fragment.Setting;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -17,7 +16,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-	public LineChartFragment lineChartFragment;
+	public Setting settingFragment;
 	public GraphPieFragment graphPieFragment;
 	public GraphBarFragment graphBarFragment;
 	public TextView mTextMessage;
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 			switch (item.getItemId()) {
 				case R.id.navigation_home:
 					getSupportFragmentManager().beginTransaction()
-							.replace(R.id.content, lineChartFragment)
+							.replace(R.id.content, settingFragment)
 							.commit();
 					return true;
 				case R.id.navigation_dashboard:
@@ -64,11 +63,11 @@ public class MainActivity extends AppCompatActivity {
 		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 		// フラグメント
-		lineChartFragment = new LineChartFragment();
+		settingFragment = new Setting();
 		graphPieFragment = new GraphPieFragment();
 		graphBarFragment = new GraphBarFragment();
 		getSupportFragmentManager().beginTransaction()
-				.add(R.id.content, lineChartFragment)
+				.add(R.id.content, settingFragment)
 				.addToBackStack(null)
 				.commit();
 

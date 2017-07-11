@@ -33,7 +33,7 @@ public class GraphPieFragment extends Fragment {
 
 	//
 	PieChart pieChart;
-	View view;
+//	View view;
 
 	// TODO: Rename parameter arguments, choose names that match
 	// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -82,7 +82,10 @@ public class GraphPieFragment extends Fragment {
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 
-		view = inflater.inflate(R.layout.fragment_graph_pie, container, false);
+		View view = inflater.inflate(R.layout.fragment_graph_pie, container, false);
+		pieChart = (PieChart) view.findViewById(R.id.pie_chart);
+		createPieChart(view);
+
 		return view;
 	}
 
@@ -125,8 +128,28 @@ public class GraphPieFragment extends Fragment {
 		void onFragmentInteraction(Uri uri);
 	}
 
-	private void createPieChart() {
-		PieChart pieChart = (PieChart) view.findViewById(R.id.pie_chart);
+	/**
+	 * ver3の書き方
+	 */
+	private void createPieChart(View view) {
+		List<PieEntry> entries = new ArrayList<>();
+
+		entries.add(new PieEntry(18.5f, "Green"));
+		entries.add(new PieEntry(26.7f, "Yellow"));
+		entries.add(new PieEntry(24.0f, "Red"));
+		entries.add(new PieEntry(30.8f, "Blue"));
+
+		PieDataSet set = new PieDataSet(entries, "色の割合");
+		List<Integer> colors = new ArrayList<>();
+		colors.add(ColorTemplate.COLORFUL_COLORS[3]);
+		colors.add(ColorTemplate.COLORFUL_COLORS[2]);
+		colors.add(ColorTemplate.COLORFUL_COLORS[0]);
+		colors.add(ColorTemplate.COLORFUL_COLORS[1]);
+		set.setColors(colors);
+		PieData data = new PieData(set);
+		data.setValueTextColor(Color.rgb(0,100,0)); // 円グラフの値の色
+		data.setValueTextSize(14); // 円グラフの値を表示する大きさ
+		pieChart.setData(data);
 
 		pieChart.setDrawHoleEnabled(true); // 真ん中に穴を空けるかどうか
 		pieChart.setHoleRadius(50f);       // 真ん中の穴の大きさ(%指定)
@@ -136,12 +159,10 @@ public class GraphPieFragment extends Fragment {
 		pieChart.setRotationEnabled(true);       // 回転可能かどうか
 		pieChart.getLegend().setEnabled(true);   //
 		pieChart.getDescription().setText("PieChart 説明");
-		pieChart.setData(createPieChartData());
-
 		// 更新
 		pieChart.invalidate();
 		// アニメーション
-		pieChart.animateXY(2000, 2000); // 表示アニメーション
+//		pieChart.animateXY(2000, 2000); // 表示アニメーション
 	}
 
 	// pieChartのデータ設定
