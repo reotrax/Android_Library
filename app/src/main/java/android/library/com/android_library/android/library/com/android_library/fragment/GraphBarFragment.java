@@ -1,7 +1,6 @@
 package android.library.com.android_library.android.library.com.android_library.fragment;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,13 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.library.com.android_library.R;
-
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,9 +74,9 @@ public class GraphBarFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View view = inflater.inflate(R.layout.fragment_graph_bar, container, false);
+		View view = inflater.inflate(android.library.com.android_library.R.layout.fragment_graph_bar, container, false);
 
-		barChart = (BarChart) view.findViewById(R.id.bar);
+		barChart = (BarChart) view.findViewById(android.library.com.android_library.R.id.bar);
 		barChart.getAxisLeft().setAxisMaximum(10000f);
 		barChart.getAxisLeft().setAxisMinimum(0f);
 //		barChart.getAxisLeft().setStartAtZero(false);

@@ -9,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.library.com.android_library.R;
-
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -82,8 +80,8 @@ public class GraphPieFragment extends Fragment {
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 
-		View view = inflater.inflate(R.layout.fragment_graph_pie, container, false);
-		pieChart = (PieChart) view.findViewById(R.id.pie_chart);
+		View view = inflater.inflate(android.library.com.android_library.R.layout.fragment_graph_pie, container, false);
+		pieChart = (PieChart) view.findViewById(android.library.com.android_library.R.id.pie_chart);
 		createPieChart(view);
 
 		return view;

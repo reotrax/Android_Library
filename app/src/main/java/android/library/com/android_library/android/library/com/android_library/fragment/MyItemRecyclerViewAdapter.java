@@ -1,28 +1,26 @@
 package android.library.com.android_library.android.library.com.android_library.fragment;
 
-import android.library.com.android_library.R;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import android.library.com.android_library.android.library.com.android_library.fragment.ItemFragment.OnListFragmentInteractionListener;
-import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent.DummyItem;
-
 import java.util.List;
 
+import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent;
+
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * {@link RecyclerView.Adapter} that can display a {@link DummyContent.DummyItem} and makes a call to the
+ * specified {@link ItemFragment.OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-	private final List<DummyItem> mValues;
-	private final OnListFragmentInteractionListener mListener;
+	private final List<DummyContent.DummyItem> mValues;
+	private final ItemFragment.OnListFragmentInteractionListener mListener;
 
-	public MyItemRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+	public MyItemRecyclerViewAdapter(List<DummyContent.DummyItem> items, ItemFragment.OnListFragmentInteractionListener listener) {
 		mValues = items;
 		mListener = listener;
 	}
@@ -30,7 +28,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		View view = LayoutInflater.from(parent.getContext())
-				.inflate(R.layout.fragment_item, parent, false);
+				.inflate(android.library.com.android_library.R.layout.fragment_item, parent, false);
 		return new ViewHolder(view);
 	}
 
@@ -59,12 +57,12 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 	public class ViewHolder extends RecyclerView.ViewHolder {
 		public final View mView;
 		public final TextView mIdView;
-		public DummyItem mItem;
+		public DummyContent.DummyItem mItem;
 
 		public ViewHolder(View view) {
 			super(view);
 			mView = view;
-			mIdView = (TextView) view.findViewById(R.id.id);
+			mIdView = (TextView) view.findViewById(android.library.com.android_library.R.id.id);
 		}
 
 		@Override

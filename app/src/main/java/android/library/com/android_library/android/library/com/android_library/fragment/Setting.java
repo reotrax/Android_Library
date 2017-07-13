@@ -1,18 +1,25 @@
 package android.library.com.android_library.android.library.com.android_library.fragment;
 
 import android.content.Context;
+import android.library.com.android_library.R;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.library.com.android_library.R;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,19 +29,29 @@ import android.widget.Spinner;
  * Use the {@link Setting#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Setting extends Fragment implements AdapterView.OnItemSelectedListener {
-    // TODO:
-    private EditText text_subgenre;
-    private Spinner spinner_genre, spinner_subgenre;
-    // スピナー項目
-    String[] area      = {"北海道", "東京", "大阪", "福岡", "沖縄"};
-    String[] genre     = {"選択してください", "音楽","美術","建築","スポーツ","TV/ラジオ",};
-    String[] sub_music = {"クラブ","ロック","ジャズ"};
-    String[] sub_art   = {"ロマン派","抽象派","印象派"};
-    String[] sub_architect = {"近代建築","西洋建築","メタボリズム"};
-    String[] sub_sport = {"野球","サッカー","オリンピック"};
-    String[] sub_tv = {"日テレ","テレ朝","ＮＨＫ"};
+public class Setting extends Fragment implements RadioGroup.OnCheckedChangeListener, View.OnClickListener {
 
+    // TODO:
+    @BindView(R.id.radioGroup) RadioGroup radioGroup;
+    @BindView(R.id.add_genre) EditText add_genre;
+    @BindView(R.id.date) EditText date;
+    @BindView(R.id.money) EditText money;
+    @BindView(R.id.genre) Spinner spinner_genre;
+    @BindView(R.id.registration) Button registration;
+    private Unbinder unbinder;
+
+    // スピナー：支出・収入のジャンル
+    final String spending1 = "";
+    final String income1   = "";
+    String[] genreData = {""};
+    String[] spending = {"カード引き落とし", "食費", "本", "雑費"}; // 支出
+    String[] income   = {"給料", "おこづかい", "臨時収入"}; // 収入
+    // スピナー：支出・収入のサブジャンル
+    // スピナー用
+    ArrayAdapter<String> adapter_genre, adapter_sub;
+
+    // デバッグ用
+    TextView debugtext;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -70,6 +87,17 @@ public class Setting extends Fragment implements AdapterView.OnItemSelectedListe
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -82,70 +110,73 @@ public class Setting extends Fragment implements AdapterView.OnItemSelectedListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        View view = inflater.inflate(android.library.com.android_library.R.layout.fragment_setting, container, false);
+        unbinder = ButterKnife.bind(this, view);
 
+//        radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
+//        date = (EditText) view.findViewById(R.id.date);
+//        money = (EditText) view.findViewById(R.id.money);
+//        spinner_genre    = (Spinner) view.findViewById(R.id.genre);
+//        add_genre = (EditText) view.findViewById(R.id.add_genre);
+//        registration = (Button) view.findViewById(R.id.registration);
+//        debugtext = (TextView) view.findViewById(R.id.debugText);
 
-        // スピナー
-        spinner_genre    = (Spinner) view.findViewById(R.id.spinner_genre);
-        spinner_subgenre = (Spinner) view.findViewById(R.id.spinner_subgenre);
-        // スピナーアダプター
-        ArrayAdapter<String> adapter_genre    = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, genre);
-        ArrayAdapter<String> adapter_subgenre = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, sub_music);
+        // スピナー設定
+        genreData    = spending;
+        adapter_genre = new ArrayAdapter<String>(getContext(), android.library.com.android_library.R.layout.support_simple_spinner_dropdown_item, genreData);
         spinner_genre.setAdapter(adapter_genre);
-        spinner_subgenre.setAdapter(adapter_subgenre);
-        spinner_genre.setOnItemSelectedListener(this);
 
-        // EditText
-        text_subgenre = (EditText) view.findViewById(R.id.editText_subgenre);
-
+        // リスナー設定
+        radioGroup.setOnCheckedChangeListener(this);
+        registration.setOnClickListener(this);
 
         return view;
     }
 
     /**
-     * スピナーの項目変更時の対応
-     * @param adapterView
+     * リスナー：ボタン
      * @param view
-     * @param i
-     * @param l
      */
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onClick(View view) {
+        debugtext.setText(add_genre.getText());
 
-        ArrayAdapter<String> adapter_subgenre = null;
-
-        switch (adapterView.getSelectedItem().toString()) {
-            case "選択してください":
-                break;
-            case "音楽":
-                adapter_subgenre = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, sub_music);
-                break;
-            case "美術":
-                adapter_subgenre = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, sub_art);
-                break;
-            case "建築":
-                adapter_subgenre = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, sub_architect);
-                break;
-            case "スポーツ":
-                adapter_subgenre = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, sub_sport);
-                break;
-            case "TV/ラジオ":
-                adapter_subgenre = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, sub_tv);
-                break;
-        }
-
-        if (adapter_subgenre != null)
-            spinner_subgenre.setAdapter(adapter_subgenre);
-
+        if (view == null) {
+            // Nothing to do.
+            debugtext.setText("view == null！");
+        } else if (date.getText().toString().trim().equals("")) {
+            // Nothing to do.
+            debugtext.setText("日付が正しく入力されていません");
+        } else if (money.getText().toString().trim().equals("")) {
+            // Nothing to do.
+            debugtext.setText("金額が正しく入力されていません");
+        } else switch (view.getId()) {
+                case android.library.com.android_library.R.id.registration:
+                    debugtext.setText("登録！");
+                    break;
+            }
     }
 
     /**
-     * スピナーの？
-     * @param adapterView
+     * リスナー設定：ラジオグループ
+     * @param radioGroup
+     * @param i
      */
     @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
+    public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+        switch (i) {
+            case android.library.com.android_library.R.id.spending:
+                // 支出：スピナーを変更
+                genreData = spending;
+                break;
+            case android.library.com.android_library.R.id.income:
+                // 収入：スピナーを変更
+                genreData = income;
+                break;
+        }
 
+        adapter_genre = new ArrayAdapter<String>(getContext(), android.library.com.android_library.R.layout.support_simple_spinner_dropdown_item, genreData);
+        spinner_genre.setAdapter(adapter_genre);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -156,20 +187,15 @@ public class Setting extends Fragment implements AdapterView.OnItemSelectedListe
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     /**
@@ -186,4 +212,5 @@ public class Setting extends Fragment implements AdapterView.OnItemSelectedListe
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }

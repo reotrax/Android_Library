@@ -1,13 +1,17 @@
 package android.library.com.android_library;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.library.com.android_library.android.library.com.android_library.fragment.GraphBarFragment;
 import android.library.com.android_library.android.library.com.android_library.fragment.GraphPieFragment;
 import android.library.com.android_library.android.library.com.android_library.fragment.Setting;
+import android.library.com.android_library.android.library.com.android_library.fragment.parts.DatabaseHelper;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -58,7 +62,30 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 
-		mTextMessage = (TextView) findViewById(R.id.message);
+		// SQLite
+		DatabaseHelper helper = new DatabaseHelper(this); // ヘルパー準備
+		SQLiteDatabase db = helper.getWritableDatabase(); // データベースを取得
+		Cursor c = db.query(
+				"genre",    	  	// table
+				new String[]{"genre","subgenre"},   // column
+				"genre_id=?",       // where
+				new String[]{"1"},  // where args
+				null,       	    // group by
+				null,       		// having
+				"genre_id",     	// order by
+				null         		// limit
+		);
+		c.moveToFirst();
+		Log.d("SELECT", "開始 / " + c.getCount());
+		for (int i=0; i<c.getCount(); i++) {
+			String genre = c.getString(c.getColumnIndex("genre"));
+			String subgenre = c.getString(c.getColumnIndex("subgenre"));
+			Log.d("SELECT " + i, genre + " / " + subgenre);
+			c.moveToNext();
+		}
+		db.close();
+
+		//
 		BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
 		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -72,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 				.commit();
 
 		// 画面サイズ取得＞ビューのサイズ設定
-		Point point = getDisplaySize(mTextMessage);
+//		Point point = getDisplaySize(mTextMessage);
 	}
 
 

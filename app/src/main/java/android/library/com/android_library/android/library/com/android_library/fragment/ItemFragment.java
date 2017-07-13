@@ -9,11 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.library.com.android_library.R;
-import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent;
-import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent.DummyItem;
 
-import java.util.List;
+import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
@@ -58,7 +55,7 @@ public class ItemFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_item_list, container, false);
+		View view = inflater.inflate(android.library.com.android_library.R.layout.fragment_item_list, container, false);
 
 		// Set the adapter
 		if (view instanceof RecyclerView) {
@@ -104,6 +101,6 @@ public class ItemFragment extends Fragment {
 	 */
 	public interface OnListFragmentInteractionListener {
 		// TODO: Update argument type and name
-		void onListFragmentInteraction(DummyItem item);
+		void onListFragmentInteraction(DummyContent.DummyItem item);
 	}
 }

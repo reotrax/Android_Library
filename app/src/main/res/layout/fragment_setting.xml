@@ -2,56 +2,140 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="android.library.com.android_library.android.library.com.android_library.fragment.Setting">
+    tools:context="android.library.com.android_library.androidlib.library.com.android_library.android.library.com.android_library.fragment.Setting">
 
-    <!-- TODO: Update blank fragment layout -->
-    <EditText
-        android:id="@+id/editText_area"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="金額"
-        android:layout_alignParentTop="true"
-        />
+        android:layout_alignParentTop="true" >
 
-    <Spinner
-        android:id="@+id/spinner_genre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText_area"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
-        />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/relativeLayout">
 
-    <Spinner
-        android:id="@+id/spinner_subgenre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/spinner_genre"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="16dp"
-        />
+            <!-- TODO: Update blank fragment layout -->
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" >
 
-    <EditText
-        android:id="@+id/editText_subgenre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/spinner_subgenre"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="金額"
-        />
+                <RadioButton
+                    android:id="@+id/spending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/radioButton"
+                    android:duplicateParentState="true"
+                    android:text="支出" />
 
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="240dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText_subgenre"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="26dp"
-        android:text="登録" />
+                <RadioButton
+                    android:id="@+id/income"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/radioButton"
+                    android:duplicateParentState="true"
+                    android:layout_marginLeft="32dp"
+                    android:text="収入" />
+
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/radioGroup"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:ems="10"
+                android:inputType="date" />
+
+            <EditText
+                android:id="@+id/money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/date"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:ems="10"
+                android:inputType="number"
+                android:gravity="right"
+                android:hint="金額"
+                />
+
+            <Spinner
+                android:id="@+id/genre"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@+id/money"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="16dp"
+                />
+
+            <RelativeLayout
+                android:id="@+id/add_genre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/genre"
+                android:layout_alignParentStart="true"
+                >
+
+                <CheckBox
+                    android:id="@+id/checkBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    />
+
+                <EditText
+                    android:id="@+id/add_genre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_toRightOf="@id/checkBox"
+                    android:ems="10"
+                    android:hint="ジャンルを追加"
+                    android:inputType="text" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/debugText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/add_genre"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:ems="10"
+                android:textColor="@color/colorAccent"
+                android:inputType="textPersonName" />
+
+            <Button
+                android:id="@+id/registration"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/debugText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="登録" />
+
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </RelativeLayout>
