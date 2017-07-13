@@ -30,6 +30,7 @@ import butterknife.Unbinder;
  * create an instance of this fragment.
  */
 public class Setting extends Fragment implements RadioGroup.OnCheckedChangeListener, View.OnClickListener {
+
     // TODO:
     @BindView(R.id.radioGroup) RadioGroup radioGroup;
     @BindView(R.id.add_genre) EditText add_genre;
