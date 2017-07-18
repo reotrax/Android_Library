@@ -1,6 +1,10 @@
 package android.library.com.android_library.android.library.com.android_library.fragment;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.library.com.android_library.android.library.com.android_library.fragment.parts.BarGenre;
+import android.library.com.android_library.android.library.com.android_library.fragment.parts.DatabaseHelper;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,6 +37,9 @@ public class GraphBarFragment extends Fragment {
 	// TODO: Rename and change types of parameters
 	private String mParam1;
 	private String mParam2;
+
+	// TODO: BarChart;
+	private BarChart barChart;
 
 	private OnFragmentInteractionListener mListener;
 
@@ -67,9 +74,6 @@ public class GraphBarFragment extends Fragment {
 		}
 	}
 
-
-	BarChart barChart;
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
@@ -81,24 +85,86 @@ public class GraphBarFragment extends Fragment {
 		barChart.getAxisLeft().setAxisMinimum(0f);
 //		barChart.getAxisLeft().setStartAtZero(false);
 		barChart.getDescription().setText("Bar 説明");
-		barChartSetting();
+		barChartSetting(getSpendingListOf(Type.DAILY));
 
 		return view;
 	}
 
 	/**
+	 * メソッド getSpendingListOf() 用クラス。
+	 * DAILY、MONTHLY、BYYEAR
+	 */
+	static class Type {
+		private static final String DAILY = "Daily";
+		private static final String MONTHLY = "Monthly";
+		private static final String BYYEAR = "ByYear";
+	}
+
+	/**
+	 * 日別支出一覧を作成して返す。
+	 * 日別:Type.DAILY、
+	 * 月別:Type.MONTHLY、
+	 * 年別:Type.BYYEAR
+	 * @param type
+	 * @return
+	 */
+	private List<BarGenre> getSpendingListOf(String type) {
+		String substring = "substr(date,0,0)";
+
+		// 何別か判定
+		if (type.equals(null)) {
+			// Nothing to do.
+		} else switch (type) {
+			case Type.DAILY:
+				substring = "substr(date,9,2)";
+				break;
+			case Type.MONTHLY:
+				substring = "substr(date,6,2)";
+				break;
+			case Type.BYYEAR:
+				substring = "substr(date,1,4)";
+				break;
+		}
+
+		List<BarGenre> list = new ArrayList<>();
+
+		// SQLite
+		DatabaseHelper helper = new DatabaseHelper(getContext());
+		SQLiteDatabase db = helper.getWritableDatabase();
+		Cursor c = db.query(
+				"history",    	  							// FROM table
+				new String[]{substring + " as ymd", "genre","sum(money) as money"},   // SELECT columns
+				"date>=? and genre=?",       				// WHERE
+				new String[]{"2017-01-01", "1"}, 			// WHERE args
+				substring + ", genre",						// GROUP BY
+				null,       								// HAVING
+				"date, genre",     							// ORDER BY
+				null         								// LIMIT
+		);
+		c.moveToFirst();
+		for (int i=0; i<c.getCount(); i++) {
+			String date = c.getString(c.getColumnIndex("ymd"));
+			String genre = c.getString(c.getColumnIndex("genre"));
+			String money = c.getString(c.getColumnIndex("money"));
+			list.add(new BarGenre(date, genre, Integer.valueOf(money)));
+			c.moveToNext();
+		}
+		db.close();
+
+		return list;
+	}
+
+	/**
 	 * v3以降の書き方
 	 */
-	public void barChartSetting() {
+	public void barChartSetting(List<BarGenre> list) {
 		//
 		List<BarEntry> entries = new ArrayList<>();
-		entries.add(new BarEntry(0f, 3000f));
-		entries.add(new BarEntry(1f, 8000f));
-		entries.add(new BarEntry(2f, 6000f));
-		entries.add(new BarEntry(3f, 5000f));
-		// gap of 2f
-		entries.add(new BarEntry(5f, 7000f));
-		entries.add(new BarEntry(6f, 6000f));
+		for (int i=0; i<list.size(); i++) {
+			Float date = Float.valueOf(list.get(i).date);
+			Float money = Float.valueOf(list.get(i).money);
+			entries.add(new BarEntry(date, money));
+		}
 
 		BarDataSet set = new BarDataSet(entries, "Barデータセット");
 
@@ -116,7 +182,6 @@ public class GraphBarFragment extends Fragment {
 		barChart.setTouchEnabled(false); // タッチ関係の反応の許可
 		barChart.setDrawBorders(false);
 		barChart.invalidate(); // refresh
-
 
 		// #Grouped BarChart
 //		int[] group1 = {500,	3500,	5500,	7500,	8500,	9500};

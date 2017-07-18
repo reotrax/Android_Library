@@ -51,26 +51,47 @@
 
             </RadioGroup>
 
-            <EditText
-                android:id="@+id/date"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/date_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/radioGroup"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="16dp"
-                android:ems="10"
-                android:inputType="date" />
+                android:layout_alignParentStart="true"
+                >
+
+                <EditText
+                    android:id="@+id/year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="16dp"
+                    android:ems="10"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="date" />
+
+                <Button
+                    android:id="@+id/yearBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="16dp"
+                    android:background="#00000000"
+                    android:ems="10"
+                    android:gravity="center" />
+
+            </RelativeLayout>
 
             <EditText
                 android:id="@+id/money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/date"
+                android:layout_below="@+id/date_layout"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
                 android:ems="10"
                 android:inputType="number"
-                android:gravity="right"
+                android:gravity="center"
                 android:hint="金額"
                 />
 
@@ -84,7 +105,7 @@
                 />
 
             <RelativeLayout
-                android:id="@+id/add_genre"
+                android:id="@+id/add_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/genre"
@@ -107,8 +128,9 @@
                     android:layout_marginLeft="16dp"
                     android:layout_toRightOf="@id/checkBox"
                     android:ems="10"
-                    android:hint="ジャンルを追加"
-                    android:inputType="text" />
+                    android:hint="ジャンルを追加する場合に記入"
+                    android:inputType="text"
+                    />
 
             </RelativeLayout>
 
@@ -116,11 +138,12 @@
                 android:id="@+id/debugText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/add_genre"
+                android:layout_below="@+id/add_layout"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
                 android:ems="10"
                 android:textColor="@color/colorAccent"
+                android:gravity="center"
                 android:inputType="textPersonName" />
 
             <Button

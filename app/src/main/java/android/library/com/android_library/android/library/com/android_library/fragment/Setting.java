@@ -1,8 +1,14 @@
 package android.library.com.android_library.android.library.com.android_library.fragment;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.icu.util.Calendar;
 import android.library.com.android_library.R;
+import android.library.com.android_library.android.library.com.android_library.fragment.parts.DatabaseHelper;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
@@ -12,14 +18,15 @@ import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,26 +36,25 @@ import butterknife.Unbinder;
  * Use the {@link Setting#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Setting extends Fragment implements RadioGroup.OnCheckedChangeListener, View.OnClickListener {
-
+public class Setting extends Fragment implements RadioGroup.OnCheckedChangeListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     // TODO:
-    @BindView(R.id.radioGroup) RadioGroup radioGroup;
-    @BindView(R.id.add_genre) EditText add_genre;
-    @BindView(R.id.date) EditText date;
-    @BindView(R.id.money) EditText money;
-    @BindView(R.id.genre) Spinner spinner_genre;
-    @BindView(R.id.registration) Button registration;
-    private Unbinder unbinder;
+    //    @BindView(R.id.radioGroup)
+    private RadioGroup radioGroup;
+    private EditText dateEditText;
+    private EditText money;
+    private Spinner spinner_genre;
+    private CheckBox checkBox;
+    private EditText add_genre;
+    private Button yearBtn, registration;
+    //    private Unbinder unbinder;
 
     // スピナー：支出・収入のジャンル
-    final String spending1 = "";
-    final String income1   = "";
     String[] genreData = {""};
     String[] spending = {"カード引き落とし", "食費", "本", "雑費"}; // 支出
     String[] income   = {"給料", "おこづかい", "臨時収入"}; // 収入
     // スピナー：支出・収入のサブジャンル
     // スピナー用
-    ArrayAdapter<String> adapter_genre, adapter_sub;
+    ArrayAdapter<String> adapter_genre;
 
     // デバッグ用
     TextView debugtext;
@@ -111,26 +117,70 @@ public class Setting extends Fragment implements RadioGroup.OnCheckedChangeListe
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(android.library.com.android_library.R.layout.fragment_setting, container, false);
-        unbinder = ButterKnife.bind(this, view);
 
-//        radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
-//        date = (EditText) view.findViewById(R.id.date);
-//        money = (EditText) view.findViewById(R.id.money);
-//        spinner_genre    = (Spinner) view.findViewById(R.id.genre);
-//        add_genre = (EditText) view.findViewById(R.id.add_genre);
-//        registration = (Button) view.findViewById(R.id.registration);
-//        debugtext = (TextView) view.findViewById(R.id.debugText);
+        // packageのトップ？をandroidにしてしまったため、エラーが発生するので使えない。package名変更を試したが失敗...
+        // unbinder = ButterKnife.bind(this, view);
+
+        radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
+        dateEditText = (EditText) view.findViewById(R.id.year);
+        yearBtn = (Button) view.findViewById(R.id.yearBtn);
+        money = (EditText) view.findViewById(R.id.money);
+        spinner_genre    = (Spinner) view.findViewById(R.id.genre);
+        add_genre = (EditText) view.findViewById(R.id.add_genre);
+        checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+        registration = (Button) view.findViewById(R.id.registration);
+        debugtext = (TextView) view.findViewById(R.id.debugText);
+
+        // 日付設定
+        String[] ymd = todayOfString();
+        dateEditText.setText(ymd[0] + "-" + ymd[1] + "-" + ymd[2]);
 
         // スピナー設定
-        genreData    = spending;
-        adapter_genre = new ArrayAdapter<String>(getContext(), android.library.com.android_library.R.layout.support_simple_spinner_dropdown_item, genreData);
+        genreData = spending;
+        adapter_genre = new ArrayAdapter<>(getContext(), android.library.com.android_library.R.layout.support_simple_spinner_dropdown_item, genreData);
         spinner_genre.setAdapter(adapter_genre);
+
+        // チェックボックス関係
+        add_genre.setTextColor(Color.LTGRAY);
+        checkBox.setChecked(false);
 
         // リスナー設定
         radioGroup.setOnCheckedChangeListener(this);
+        yearBtn.setOnClickListener(this);
         registration.setOnClickListener(this);
+        checkBox.setOnCheckedChangeListener(this);
 
         return view;
+    }
+
+    /**
+     * 今日の日付を文字列で作成。/n
+     * Android OSのバージョンによって内部処理が異なる。
+     * @return 要素[0]:String year, [1]:String month, [2]:String day
+     */
+    private String[] todayOfString() {
+        // Android Versionを取得
+        int versionCode = Build.VERSION.SDK_INT;
+        int versionCodeLine = Build.VERSION_CODES.N;
+        debugtext.setText(Integer.toString(versionCode) + " / " + versionCodeLine);
+
+        // Android OSのバージョンで処理が異なる。
+        String year = "";
+        String month = "";
+        String day = "";
+        if (versionCode >= versionCodeLine) {
+            Calendar cal = Calendar.getInstance();
+            year  = Integer.toString(cal.get(Calendar.YEAR));
+            month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+            day   = String.format("%02d", cal.get(Calendar.DATE));
+        } else if (versionCode < versionCodeLine) {
+            Date d = new Date();
+            year  = Integer.toString(1900 + d.getYear());
+            month = String.format("%02d", d.getMonth() + 1);
+            day   = String.format("%02d", d.getDate() + 1);
+        }
+
+        return new String[]{year, month, day};
     }
 
     /**
@@ -141,20 +191,60 @@ public class Setting extends Fragment implements RadioGroup.OnCheckedChangeListe
     public void onClick(View view) {
         debugtext.setText(add_genre.getText());
 
-        if (view == null) {
-            // Nothing to do.
-            debugtext.setText("view == null！");
-        } else if (date.getText().toString().trim().equals("")) {
-            // Nothing to do.
-            debugtext.setText("日付が正しく入力されていません");
-        } else if (money.getText().toString().trim().equals("")) {
-            // Nothing to do.
-            debugtext.setText("金額が正しく入力されていません");
-        } else switch (view.getId()) {
-                case android.library.com.android_library.R.id.registration:
-                    debugtext.setText("登録！");
-                    break;
-            }
+        switch (view.getId()) {
+            case R.id.yearBtn:
+                final String[] ymd;
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                        // イベントリスナー登録
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                setYearMonthDay(year, month, day);
+                            }
+                        }, 2017, 7, 14);
+                datePickerDialog.setTitle("ぴっかー");
+                datePickerDialog.show();
+                break;
+            case R.id.registration:
+                if (view == null) {
+                    // Nothing to do.
+                    debugtext.setText("view == null！");
+                } else if (dateEditText.getText().toString().trim().equals("")) {
+                    // Nothing to do.
+                    debugtext.setText("日付が正しく入力されていません");
+                } else if (money.getText().toString().trim().equals("")) {
+                    // Nothing to do.
+                    debugtext.setText("金額が正しく入力されていません");
+                } else switch (view.getId()) {
+                    case android.library.com.android_library.R.id.registration:
+                        debugtext.setText("登録！");
+                        break;
+                }
+
+                // TODO: テスト登録
+                DatabaseHelper helper = new DatabaseHelper(getActivity()); // ヘルパー準備
+                SQLiteDatabase db = helper.getWritableDatabase(); // データベースを取得
+                db.execSQL("INSERT INTO history VALUES " +
+                        "(5, '1', '2017-07-26', '1', 1000, 'content05')"
+                );
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 日付を設定する。
+     * @param year
+     * @param month
+     * @param day
+     */
+    public void setYearMonthDay(int year, int month, int day) {
+        dateEditText.setText(
+                year + "-" +
+                String.format("%02d", month) + "-" +
+                String.format("%02d", day)
+        );
     }
 
     /**
@@ -175,7 +265,7 @@ public class Setting extends Fragment implements RadioGroup.OnCheckedChangeListe
                 break;
         }
 
-        adapter_genre = new ArrayAdapter<String>(getContext(), android.library.com.android_library.R.layout.support_simple_spinner_dropdown_item, genreData);
+        adapter_genre = new ArrayAdapter<>(getContext(), android.library.com.android_library.R.layout.support_simple_spinner_dropdown_item, genreData);
         spinner_genre.setAdapter(adapter_genre);
     }
 
@@ -183,6 +273,22 @@ public class Setting extends Fragment implements RadioGroup.OnCheckedChangeListe
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    /**
+     * リスナー：チェックボックス
+     * @param compoundButton
+     * @param b
+     */
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        if (b == true) {
+            spinner_genre.setEnabled(false);
+            add_genre.setTextColor(Color.BLACK);
+        } else if (b == false) {
+            spinner_genre.setEnabled(true);
+            add_genre.setTextColor(Color.LTGRAY);
         }
     }
 
@@ -195,7 +301,7 @@ public class Setting extends Fragment implements RadioGroup.OnCheckedChangeListe
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
+//        unbinder.unbind();
     }
 
     /**

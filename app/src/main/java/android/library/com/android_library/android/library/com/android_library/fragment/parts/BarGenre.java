@@ -4,25 +4,14 @@ package android.library.com.android_library.android.library.com.android_library.
  * Created by reo on 2017/07/14.
  */
 
-public class Table {
+public class BarGenre {
+    public String date;
+    public String genre;
+    public int money;
 
-    class PieGenre {
-        String genre;
-        int money;
-
-        public PieGenre(String genre, int money) {
-            this.genre = genre;
-            this.money = money;
-        }
-    }
-
-    class BarGenre {
-        String genre;
-        int money;
-
-        public BarGenre(String genre, int money) {
-            this.genre = genre;
-            this.money = money;
-        }
+    public BarGenre(String date, String genre, int money) {
+        this.date = date;
+        this.genre = genre;
+        this.money = money;
     }
 }

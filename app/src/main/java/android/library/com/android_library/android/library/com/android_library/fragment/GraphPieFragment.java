@@ -1,10 +1,16 @@
 package android.library.com.android_library.android.library.com.android_library.fragment;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent;
+import android.library.com.android_library.android.library.com.android_library.fragment.parts.DatabaseHelper;
+import android.library.com.android_library.android.library.com.android_library.fragment.parts.PieGenre;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,10 +85,9 @@ public class GraphPieFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-
 		View view = inflater.inflate(android.library.com.android_library.R.layout.fragment_graph_pie, container, false);
 		pieChart = (PieChart) view.findViewById(android.library.com.android_library.R.id.pie_chart);
-		createPieChart(view);
+		createPieChart(dbRaws());
 
 		return view;
 	}
@@ -127,28 +132,65 @@ public class GraphPieFragment extends Fragment {
 	}
 
 	/**
+	 *
+	 */
+	private List<PieGenre> dbRaws() {
+		List<PieGenre> list = new ArrayList<>();
+
+		DatabaseHelper helper = new DatabaseHelper(getContext());
+		SQLiteDatabase db = helper.getWritableDatabase();
+		Cursor c = db.query(
+				"history",    	  					// FROM table
+				new String[]{"genre","sum(money) as money"},   // SELECT columns
+				null,       				// WHERE
+				null, 					// WHERE args
+				"genre",       	    				// GROUP BY
+				null,       						// HAVING
+				"genre",     					// ORDER BY
+				null         						// LIMIT
+		);
+		c.moveToFirst();
+		for (int i=0; i<c.getCount(); i++) {
+			String genre = c.getString(c.getColumnIndex("genre"));
+			String money = c.getString(c.getColumnIndex("money"));
+			list.add(new PieGenre(genre, Integer.valueOf(money)));
+			c.moveToNext();
+		}
+		db.close();
+
+
+		return list;
+	}
+
+	/**
 	 * ver3の書き方
 	 */
-	private void createPieChart(View view) {
+	private void createPieChart(List<PieGenre> list) {
 		List<PieEntry> entries = new ArrayList<>();
-
-		entries.add(new PieEntry(18.5f, "Green"));
-		entries.add(new PieEntry(26.7f, "Yellow"));
-		entries.add(new PieEntry(24.0f, "Red"));
-		entries.add(new PieEntry(30.8f, "Blue"));
+		for (PieGenre pg : list) {
+			String genre_name = "";
+			switch (pg.genre) {
+				case "1":
+					genre_name = "支出";
+					break;
+				case "2":
+					genre_name = "収入";
+					break;
+			}
+			entries.add(new PieEntry(pg.money, genre_name));
+		}
 
 		PieDataSet set = new PieDataSet(entries, "色の割合");
 		List<Integer> colors = new ArrayList<>();
-		colors.add(ColorTemplate.COLORFUL_COLORS[3]);
-		colors.add(ColorTemplate.COLORFUL_COLORS[2]);
-		colors.add(ColorTemplate.COLORFUL_COLORS[0]);
-		colors.add(ColorTemplate.COLORFUL_COLORS[1]);
+		for (int i=0; i<entries.size(); i++) {
+			colors.add(ColorTemplate.COLORFUL_COLORS[i]);
+		}
 		set.setColors(colors);
+
 		PieData data = new PieData(set);
 		data.setValueTextColor(Color.rgb(0,100,0)); // 円グラフの値の色
 		data.setValueTextSize(14); // 円グラフの値を表示する大きさ
 		pieChart.setData(data);
-
 		pieChart.setDrawHoleEnabled(true); // 真ん中に穴を空けるかどうか
 		pieChart.setHoleRadius(50f);       // 真ん中の穴の大きさ(%指定)
 		pieChart.setDrawHoleEnabled(true);//.setHoleColorTransparent(true);
@@ -157,44 +199,11 @@ public class GraphPieFragment extends Fragment {
 		pieChart.setRotationEnabled(true);       // 回転可能かどうか
 		pieChart.getLegend().setEnabled(true);   //
 		pieChart.getDescription().setText("PieChart 説明");
+
 		// 更新
 		pieChart.invalidate();
 		// アニメーション
 //		pieChart.animateXY(2000, 2000); // 表示アニメーション
-	}
-
-	// pieChartのデータ設定
-	private PieData createPieChartData() {
-
-		List<String> xVals = new ArrayList<>();
-		xVals.add("A");
-		xVals.add("B");
-		xVals.add("C");
-
-		List<PieEntry> yVals = new ArrayList<>();
-		yVals.add(new PieEntry(20, 0));
-		yVals.add(new PieEntry(30, 1));
-		yVals.add(new PieEntry(50, 2));
-
-		PieDataSet dataSet = new PieDataSet(yVals, "Data");
-		dataSet.setSliceSpace(5f);
-		dataSet.setSelectionShift(1f);
-
-		// 色の設定
-		List<Integer> colors = new ArrayList<>();
-		colors.add(ColorTemplate.COLORFUL_COLORS[0]);
-		colors.add(ColorTemplate.COLORFUL_COLORS[1]);
-		colors.add(ColorTemplate.COLORFUL_COLORS[2]);
-		dataSet.setColors(colors);
-		dataSet.setDrawValues(true);
-
-		PieData data = new PieData(dataSet);//xVals, dataSet);
-		data.setValueFormatter(new PercentFormatter());
-
-		// テキストの設定
-		data.setValueTextSize(12f);
-		data.setValueTextColor(Color.WHITE);
-		return data;
 	}
 
 }

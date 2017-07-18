@@ -35,10 +35,18 @@ public class DummyContent {
 	private static void addItem(DummyItem item) {
 		ITEMS.add(item);
 		ITEM_MAP.put(item.id, item);
+		ITEM_MAP.put(item.date, item);
+		ITEM_MAP.put(item.genre, item);
+		ITEM_MAP.put(item.money, item);
 	}
 
 	private static DummyItem createDummyItem(int position) {
-		return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
+		return new DummyItem(String.valueOf(position),
+				"DATE",
+				"GENRE",
+				"MONEY",
+				"Item " + position,
+				makeDetails(position));
 	}
 
 	private static String makeDetails(int position) {
@@ -55,11 +63,17 @@ public class DummyContent {
 	 */
 	public static class DummyItem {
 		public final String id;
+		public final String date;
+		public final String genre;
+		public final String money;
 		public final String content;
 		public final String details;
 
-		public DummyItem(String id, String content, String details) {
+		public DummyItem(String id, String date, String genre, String money, String content, String details) {
 			this.id = id;
+			this.date = date;
+			this.genre = genre;
+			this.money = money;
 			this.content = content;
 			this.details = details;
 		}
@@ -69,4 +83,6 @@ public class DummyContent {
 			return content;
 		}
 	}
+
+
 }

@@ -5,4 +5,11 @@ package android.library.com.android_library.android.library.com.android_library.
  */
 
 public class PieGenre {
+    public String genre;
+    public int money;
+
+    public PieGenre(String genre, int money) {
+        this.genre = genre;
+        this.money = money;
+    }
 }

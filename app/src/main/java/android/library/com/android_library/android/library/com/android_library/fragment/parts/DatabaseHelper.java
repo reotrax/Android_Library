@@ -9,9 +9,11 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-
+    // TODO: データベース.スキーマ（？）
     static final private String DBNAME = "sample.sqlite";
-    static final private int VERSION = 2;
+
+    // TODO: 変更するとテーブルが再作成される作りにしているので安易に変更しない。
+    static final private int VERSION = 5;
 
     /**
      * コンストラクター
@@ -43,6 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // 基本テーブル
         db.execSQL("CREATE TABLE money (money_id INTEGER, title TEXT, money INTEGER, genre_id INTEGER, subgenre_id INTEGER, date DATE, PRIMARY KEY(money_id))");
         db.execSQL("CREATE TABLE genre (genre_id INTEGER, genre TEXT, subgenre_id INTEGER, subgenre TEXT)");
         db.execSQL("INSERT INTO genre VALUES " +
@@ -53,11 +56,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "(1, '支出', 5, '雑費')," +
                 "(2, '収入', 1, '給料')," +
                 "(2, '収入', 2, 'おこづかい')," +
-                "(2, '収入', 1, '臨時収入')");
+                "(2, '収入', 1, '臨時収入')"
+        );
+
+        // 履歴テーブル
+        db.execSQL("CREATE TABLE history (history_id INTEGER, id TEXT, date TEXT, title TEXT, genre TEXT, money INTEGER, content TEXT)");
+        db.execSQL("INSERT INTO history VALUES " +
+                "(1, '1', '2017-07-01', '1', '食費',   1000, 'content01')," +
+                "(2, '1', '2017-07-11', '1', '趣味',   5000, 'content02')," +
+                "(3, '1', '2017-07-21', '2', 'おこづかい', 100000, 'content03')"
+        );
     }
 
     /**
-     * データベースをバージョンアップした時、テーブルを再作成
+     * データベースのVERSIONがアップした時に実行される。
      * @param db
      * @param i
      * @param i1
@@ -66,6 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS money");
         db.execSQL("DROP TABLE IF EXISTS genre");
+        db.execSQL("DROP TABLE IF EXISTS history");
         onCreate(db);
     }
 }

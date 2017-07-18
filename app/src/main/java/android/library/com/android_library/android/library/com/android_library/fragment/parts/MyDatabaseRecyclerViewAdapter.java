@@ -1,5 +1,6 @@
-package android.library.com.android_library.android.library.com.android_library.fragment;
+package android.library.com.android_library.android.library.com.android_library.fragment.parts;
 
+import android.library.com.android_library.R;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,9 +35,12 @@ public class MyDatabaseRecyclerViewAdapter extends RecyclerView.Adapter<MyDataba
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
+        holder.mDateView.setText(mValues.get(position).date);
+        holder.mGenreView.setText(mValues.get(position).genre);
+        holder.mMoneyView.setText(mValues.get(position).money);
         holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -56,16 +60,26 @@ public class MyDatabaseRecyclerViewAdapter extends RecyclerView.Adapter<MyDataba
         return mValues.size();
     }
 
+
+    /**
+     * 1ポジションのレイアウト
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;
+        public final TextView mDateView;
+        public final TextView mGenreView;
+        public final TextView mMoneyView;
         public final TextView mContentView;
         public DummyItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
+            mIdView      = (TextView) view.findViewById(R.id.id);
+            mDateView    = (TextView) view.findViewById(R.id.list_date);
+            mGenreView   = (TextView) view.findViewById(R.id.list_genre);
+            mMoneyView   = (TextView) view.findViewById(R.id.list_money);
             mContentView = (TextView) view.findViewById(R.id.content);
         }
 

@@ -3,9 +3,11 @@ package android.library.com.android_library;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
+import android.library.com.android_library.android.library.com.android_library.fragment.DatabaseFragment;
 import android.library.com.android_library.android.library.com.android_library.fragment.GraphBarFragment;
 import android.library.com.android_library.android.library.com.android_library.fragment.GraphPieFragment;
 import android.library.com.android_library.android.library.com.android_library.fragment.Setting;
+import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent;
 import android.library.com.android_library.android.library.com.android_library.fragment.parts.DatabaseHelper;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,19 +16,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DatabaseFragment.OnListFragmentInteractionListener {
 
 	public Setting settingFragment;
-	public GraphPieFragment graphPieFragment;
-	public GraphBarFragment graphBarFragment;
-	public TextView mTextMessage;
 
-//	@BindView(R.id.content) FrameLayout frameLayout;
-//	@BindView(R.id.message) public TextView mTextMessage;
 //	@BindView(R.id.navigation) public BottomNavigationView navigation;
 
 	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -40,12 +36,20 @@ public class MainActivity extends AppCompatActivity {
 							.replace(R.id.content, settingFragment)
 							.commit();
 					return true;
+				case R.id.navigation_database:
+					DatabaseFragment databaseFragment = new DatabaseFragment();
+					getSupportFragmentManager().beginTransaction()
+							.replace(R.id.content, databaseFragment)
+							.commit();
+					return true;
 				case R.id.navigation_dashboard:
+					GraphPieFragment graphPieFragment = new GraphPieFragment();
 					getSupportFragmentManager().beginTransaction()
 							.replace(R.id.content, graphPieFragment)
 							.commit();
 					return true;
 				case R.id.navigation_notifications:
+					GraphBarFragment graphBarFragment = new GraphBarFragment();
 					getSupportFragmentManager().beginTransaction()
 							.replace(R.id.content, graphBarFragment)
 							.commit();
@@ -66,14 +70,14 @@ public class MainActivity extends AppCompatActivity {
 		DatabaseHelper helper = new DatabaseHelper(this); // ヘルパー準備
 		SQLiteDatabase db = helper.getWritableDatabase(); // データベースを取得
 		Cursor c = db.query(
-				"genre",    	  	// table
-				new String[]{"genre","subgenre"},   // column
-				"genre_id=?",       // where
-				new String[]{"1"},  // where args
-				null,       	    // group by
-				null,       		// having
-				"genre_id",     	// order by
-				null         		// limit
+				"genre",    	  					// FROM table
+				new String[]{"genre","subgenre"},   // SELECT columns
+				"genre_id=?",       				// WHERE
+				new String[]{"1"}, 					// WHERE args
+				null,       	    				// GROUP BY
+				null,       						// HAVING
+				"genre_id",     					// ORDER BY
+				null         						// LIMIT
 		);
 		c.moveToFirst();
 		Log.d("SELECT", "開始 / " + c.getCount());
@@ -90,9 +94,7 @@ public class MainActivity extends AppCompatActivity {
 		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
 		// フラグメント
-		settingFragment = new Setting();
-		graphPieFragment = new GraphPieFragment();
-		graphBarFragment = new GraphBarFragment();
+		settingFragment  = new Setting();
 		getSupportFragmentManager().beginTransaction()
 				.add(R.id.content, settingFragment)
 				.addToBackStack(null)
@@ -114,4 +116,8 @@ public class MainActivity extends AppCompatActivity {
 		return point;
 	}
 
+	@Override
+	public void onListFragmentInteraction(DummyContent.DummyItem item) {
+		Log.d("onListFragmentInteracti", item.genre);
+	}
 }
