@@ -46,11 +46,7 @@ public class MyDatabaseRecyclerViewAdapter extends RecyclerView.Adapter<MyDataba
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
+                onRawSelectListener(holder.mItem);
             }
         });
     }
@@ -60,9 +56,16 @@ public class MyDatabaseRecyclerViewAdapter extends RecyclerView.Adapter<MyDataba
         return mValues.size();
     }
 
+    /**
+     * ViewHolderに設定したClickListenerから呼ばれる。<br>
+     * 呼び出し元のフラグメントなどでOverrideしてClickListenerの処理内容を記述できる。
+     * @param item
+     */
+    protected void onRawSelectListener(DummyItem item) {
+    }
 
     /**
-     * 1ポジションのレイアウト
+     * RecyclerViewのアイテムデータを保持するホルダー。
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;

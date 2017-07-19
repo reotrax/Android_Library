@@ -3,6 +3,7 @@ package android.library.com.android_library.android.library.com.android_library.
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent;
 import android.library.com.android_library.android.library.com.android_library.fragment.parts.DatabaseHelper;
 import android.library.com.android_library.android.library.com.android_library.fragment.parts.MyDatabaseRecyclerViewAdapter;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.library.com.android_library.R;
 import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent.DummyItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,7 +127,7 @@ public class DatabaseFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_database_list, container, false);
 
@@ -138,7 +140,14 @@ public class DatabaseFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyDatabaseRecyclerViewAdapter(dummyItems, mListener));
+            MyDatabaseRecyclerViewAdapter adapter = new MyDatabaseRecyclerViewAdapter(dummyItems, mListener) {
+                @Override
+                protected void onRawSelectListener(DummyItem item) {
+                    super.onRawSelectListener(item);
+                    Toast.makeText(getContext(), item.date, Toast.LENGTH_SHORT).show();
+                }
+            };
+            recyclerView.setAdapter(adapter);
         }
         return view;
     }

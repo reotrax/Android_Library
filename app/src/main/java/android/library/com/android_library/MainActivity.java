@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements DatabaseFragment.
 
 
 	/**
-	 * Viesのサイズを取得。
+	 * Viewのサイズを取得。
 	 * @param view
 	 * @return
 	 */
