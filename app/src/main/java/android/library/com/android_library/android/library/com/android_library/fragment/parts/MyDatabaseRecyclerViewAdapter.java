@@ -57,8 +57,9 @@ public class MyDatabaseRecyclerViewAdapter extends RecyclerView.Adapter<MyDataba
     }
 
     /**
+     * OnClickListenerの処理を記述できる。<br>
      * ViewHolderに設定したClickListenerから呼ばれる。<br>
-     * 呼び出し元のフラグメントなどでOverrideしてClickListenerの処理内容を記述できる。
+     * 呼び出し元のフラグメントなどでOverrideして使用。
      * @param item
      */
     protected void onRawSelectListener(DummyItem item) {

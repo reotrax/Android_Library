@@ -3,7 +3,6 @@ package android.library.com.android_library.android.library.com.android_library.
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent;
 import android.library.com.android_library.android.library.com.android_library.fragment.parts.DatabaseHelper;
 import android.library.com.android_library.android.library.com.android_library.fragment.parts.MyDatabaseRecyclerViewAdapter;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -140,7 +140,9 @@ public class DatabaseFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            MyDatabaseRecyclerViewAdapter adapter = new MyDatabaseRecyclerViewAdapter(dummyItems, mListener) {
+
+            // アダプター設定
+            final MyDatabaseRecyclerViewAdapter adapter = new MyDatabaseRecyclerViewAdapter(dummyItems, mListener) {
                 @Override
                 protected void onRawSelectListener(DummyItem item) {
                     super.onRawSelectListener(item);
@@ -148,6 +150,26 @@ public class DatabaseFragment extends Fragment {
                 }
             };
             recyclerView.setAdapter(adapter);
+
+            // ItemTouchHelper : アイテムの移動や削除が簡単に導入できる
+            ItemTouchHelper itemDecor = new ItemTouchHelper(
+                    new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.RIGHT) {
+                @Override
+                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                    final int fromPos = viewHolder.getAdapterPosition();
+                    final int toPos = target.getAdapterPosition();
+                    adapter.notifyItemMoved(fromPos, toPos);
+                    return true;
+                }
+
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                    final int fromPos = viewHolder.getAdapterPosition();
+                    //datasource.remove(fromPos); // DB・リスト・アダプターからの削除処理
+                    adapter.notifyItemRemoved(fromPos);
+                }
+            });
+            itemDecor.attachToRecyclerView(recyclerView);
         }
         return view;
     }

@@ -9,6 +9,7 @@ import android.library.com.android_library.android.library.com.android_library.f
 import android.library.com.android_library.android.library.com.android_library.fragment.Setting;
 import android.library.com.android_library.android.library.com.android_library.fragment.dummy.DummyContent;
 import android.library.com.android_library.android.library.com.android_library.fragment.parts.DatabaseHelper;
+import android.library.com.android_library.android.library.com.android_library.fragment.parts.Money;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -16,6 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 
@@ -67,29 +72,9 @@ public class MainActivity extends AppCompatActivity implements DatabaseFragment.
 		ButterKnife.bind(this);
 
 		// SQLite
-		DatabaseHelper helper = new DatabaseHelper(this); // ヘルパー準備
-		SQLiteDatabase db = helper.getWritableDatabase(); // データベースを取得
-		Cursor c = db.query(
-				"genre",    	  					// FROM table
-				new String[]{"genre","subgenre"},   // SELECT columns
-				"genre_id=?",       				// WHERE
-				new String[]{"1"}, 					// WHERE args
-				null,       	    				// GROUP BY
-				null,       						// HAVING
-				"genre_id",     					// ORDER BY
-				null         						// LIMIT
-		);
-		c.moveToFirst();
-		Log.d("SELECT", "開始 / " + c.getCount());
-		for (int i=0; i<c.getCount(); i++) {
-			String genre = c.getString(c.getColumnIndex("genre"));
-			String subgenre = c.getString(c.getColumnIndex("subgenre"));
-			Log.d("SELECT " + i, genre + " / " + subgenre);
-			c.moveToNext();
-		}
-		db.close();
+		checkTables();
 
-		//
+		// BottomNavigationView
 		BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
 		navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -104,6 +89,17 @@ public class MainActivity extends AppCompatActivity implements DatabaseFragment.
 //		Point point = getDisplaySize(mTextMessage);
 	}
 
+	/**
+	 *
+	 */
+	public void checkTables() {
+		DatabaseHelper helper = new DatabaseHelper(this); // ヘルパー準備
+
+		helper.getGenreTable();
+		List<Money> moneys = helper.getMoneyTable("money",new String[]{"money_id","title","money","genre_id","subgenre_id","date"},null,null,null,null,null,null);
+		moneys.get(0);
+		helper.getHistoryTable();
+	}
 
 	/**
 	 * Viewのサイズを取得。

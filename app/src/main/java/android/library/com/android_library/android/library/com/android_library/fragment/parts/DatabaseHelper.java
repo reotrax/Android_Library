@@ -1,8 +1,13 @@
 package android.library.com.android_library.android.library.com.android_library.fragment.parts;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by reo on 2017/07/12.
@@ -80,5 +85,99 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS genre");
         db.execSQL("DROP TABLE IF EXISTS history");
         onCreate(db);
+    }
+
+
+    public void getGenreTable() {
+        SQLiteDatabase db = getWritableDatabase(); // データベースを取得
+        Cursor c = db.query(
+                "genre",    	  					// FROM table
+                new String[]{"genre_id","genre","subgenre_id","subgenre"},   // SELECT columns
+                "genre_id=?",       				// WHERE
+                new String[]{"1"}, 					// WHERE args
+                null,       	    				// GROUP BY
+                null,       						// HAVING
+                "genre_id",     					// ORDER BY
+                null         						// LIMIT
+        );
+        c.moveToFirst();
+        Log.d("SELECT", "開始 | genre / " + c.getCount());
+        Log.d("SELECT", "genre_id | genre | subgenre_id | subgenre");
+        for (int i=0; i<c.getCount(); i++) {
+            int genre_id = c.getInt(c.getColumnIndex("genre_id"));
+            String genre = c.getString(c.getColumnIndex("genre"));
+            int subgenre_id = c.getInt(c.getColumnIndex("subgenre_id"));
+            String subgenre = c.getString(c.getColumnIndex("subgenre"));
+            Log.d("SELECT " + i, genre_id + " | " + genre + " | " + subgenre_id + " | " + subgenre);
+            c.moveToNext();
+        }
+        // クローズ処理
+        c.close();
+    }
+
+    /**
+     * テーブルmoneyのレコードを取得する。<br>
+     * @param table String
+     * @param columns String[]
+     * @param where String
+     * @param whereArgs String[]
+     * @param groupBy String
+     * @param having String
+     * @param orderBy String
+     * @param limit String
+     * @return List
+     */
+    public List<Money> getMoneyTable(String table, String[] columns, String where, String[] whereArgs, String groupBy, String having, String orderBy, String limit) {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.query(table, columns, where, whereArgs, groupBy, having, orderBy, limit);
+        c.moveToFirst();
+        Log.d("SELECT", "開始 | genre / " + c.getCount());
+        Log.d("SELECT", "money_id" + " | " + "title" + " | " + "money" + " | " + "genre_id" + " | " + "subgenre_id" + " | " + "date");
+
+        List<Money> moneys = new ArrayList<>();
+        for (int i=0; i<c.getCount(); i++) {
+            int money_id = c.getInt(c.getColumnIndex("money_id"));
+            String title = c.getString(c.getColumnIndex("title"));
+            int money = c.getInt(c.getColumnIndex("money"));
+            int genre_id = c.getInt(c.getColumnIndex("genre_id"));
+            int subgenre_id = c.getInt(c.getColumnIndex("subgenre_id"));
+            String date = c.getString(c.getColumnIndex("date"));
+            Log.d("SELECT " + i, money_id + " | " + title + " | " + money + " | " + genre_id  + " | " + subgenre_id + " | " + date);
+            moneys.add(new Money(money_id, title, money, genre_id, subgenre_id, date));
+            c.moveToNext();
+        }
+        c.close();
+
+        return moneys;
+    }
+
+
+    public void getHistoryTable() {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.query(
+                "history",
+                new String[]{"history_id","id","date",/*"title",*/"genre","money","content"},
+                null,	// WHERE
+                null,	// WHERE args
+                null,	// GROUP BY
+                null,	// HAVING
+                null,	// ORDER BY
+                null	// LIMIT
+        );
+        c.moveToFirst();
+        Log.d("SELECT", "開始 | genre / " + c.getCount());
+        Log.d("SELECT", "history_id" + " | " + "id" + " | " + "date" + " | " + "title" + " | " + "genre" + " | " + "money" + " | " + "content");
+        for (int i=0; i<c.getCount(); i++) {
+            int history_id = c.getInt(c.getColumnIndex("history_id"));
+            int id = c.getInt(c.getColumnIndex("id"));
+            String date = c.getString(c.getColumnIndex("date"));
+//			String title = c.getString(c.getColumnIndex("title"));
+            String genre = c.getString(c.getColumnIndex("genre"));
+            int money = c.getInt(c.getColumnIndex("money"));
+            int content = c.getInt(c.getColumnIndex("content"));
+            Log.d("SELECT " + i, history_id + " | " + id + " | " + date + " | " + /*title + " | " + */genre + " | " + money  + " | " + content);
+            c.moveToNext();
+        }
+        db.close();
     }
 }
